@@ -1,3 +1,4 @@
+### example
 ##### GET
 `http://example.com?id=1&page=2`
 ```go
