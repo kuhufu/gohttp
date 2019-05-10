@@ -3,8 +3,6 @@ package flyhttp
 import (
 	"fmt"
 	"net/http"
-	"net/url"
-	"path"
 	"testing"
 )
 
@@ -16,16 +14,7 @@ func TestInstance_Get(t *testing.T) {
 		"age":  "1",
 	}).String()
 	if e != nil {
-		t.Error()
+		t.Error(e)
 	}
 	fmt.Println(s)
-}
-
-func Test_path(t *testing.T) {
-	p1, _ := url.Parse("https://starmicro.happyelements.cn/v1")
-	p := "idol?id=2&name=jhon"
-	p2, _ := url.Parse(p)
-	p1.Path = path.Join(p1.Path, p2.Path)
-	p1.RawQuery = p2.RawQuery
-	fmt.Println(p1.String())
 }
