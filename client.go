@@ -86,7 +86,7 @@ func (c Client) Post(url string, args ...interface{}) Result {
 }
 
 func (c Client) PostForm(url string, arg interface{}) Result {
-	var body interface{}
+	body := arg
 	switch v := arg.(type) {
 	case map[string]string:
 		res := url2.Values{}
