@@ -9,7 +9,7 @@ func (r Result) existError() bool {
 	return r.err != nil || r.resp == nil
 }
 
-func (r Result) Bytes() ([]byte, error) {
+func (r Result) Bytes() (data []byte, err error) {
 	if r.resp != nil {
 		defer r.resp.Body.Close()
 	}
@@ -20,7 +20,7 @@ func (r Result) Bytes() ([]byte, error) {
 	return ioutil.ReadAll(r.resp.Body)
 }
 
-func (r Result) String() (string, error) {
+func (r Result) String() (data string, err error) {
 	if r.resp != nil {
 		defer r.resp.Body.Close()
 	}
@@ -35,7 +35,7 @@ func (r Result) String() (string, error) {
 	return string(bytes), nil
 }
 
-func (r Result) Json() (interface{}, error) {
+func (r Result) Json() (data interface{}, err error) {
 	if r.resp != nil {
 		defer r.resp.Body.Close()
 	}

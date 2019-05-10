@@ -29,6 +29,10 @@ func Get(url string, args ...interface{}) (r Result) {
 	return defaultClient.Get(url, args...)
 }
 
+func Post(url string, args ...interface{}) (r Result) {
+	return defaultClient.Post(url, args...)
+}
+
 func PostForm(url string, arg interface{}) Result {
 	return defaultClient.PostForm(url, arg)
 }

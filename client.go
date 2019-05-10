@@ -14,39 +14,61 @@ func New(c *http.Client) Client {
 }
 
 func (c Client) Get(url string, args ...interface{}) (r Result) {
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return Result{nil, err}
-	}
-
-	if len(args) > 1 {
+	length := len(args)
+	if length > 2 {
 		return Result{nil, errors.New("args's length must equal 0 or 1")}
 	}
 
-	if len(args) == 1 {
+	var query string
+	if length >= 1 {
 		switch v := args[0].(type) {
 		case string:
-			req.URL.RawQuery = v
+			query = v
 		case map[string]string:
 			res := url2.Values{}
 			for key, value := range v {
 				res.Set(key, value)
 			}
-			req.URL.RawQuery = res.Encode()
+			query = res.Encode()
 		case url2.Values:
-			req.URL.RawQuery = v.Encode()
+			query = v.Encode()
 		}
 	}
 
-	return c.doRequest(req)
+	header := make(http.Header)
+	if length == 2 && args[1] != nil {
+		header = args[1].(http.Header)
+	}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return Result{nil, err}
+	}
+
+	if query != "" {
+		req.URL.RawQuery = query
+	}
+	req.Header = header
+	return c.Do(req)
 }
 
-func (c Client) PostForm(url string, arg interface{}) Result {
+func (c Client) Post(url string, args ...interface{}) Result {
+	length := len(args)
+	if args == nil {
+		return Result{nil, errors.New("no form data input")}
+	}
+
 	var body io.Reader
-	if arg != nil {
-		switch v := arg.(type) {
+	if length >= 1 {
+		switch v := args[0].(type) {
 		case string:
 			body = strings.NewReader(v)
+		case map[string]string:
+			res := url2.Values{}
+			for key, value := range v {
+				res.Set(key, value)
+			}
+			body = strings.NewReader(res.Encode())
 		case url2.Values:
 			body = strings.NewReader(v.Encode())
 		case []byte:
@@ -56,15 +78,26 @@ func (c Client) PostForm(url string, arg interface{}) Result {
 		}
 	}
 
-	return c.Post(url, "application/x-www-form-urlencoded", body)
+	header := make(http.Header)
+	if length == 2 && args[1] != nil {
+		header = args[1].(http.Header)
+	}
+
+	req, err := http.NewRequest("GET", url, body)
+	req.Header = header
+	if err != nil {
+		return Result{nil, err}
+	}
+	return c.Do(req)
 }
 
-func (c Client) Post(url, contentType string, body io.Reader) Result {
-	resp, err := c.inner.Post(url, contentType, body)
-	return Result{resp, err}
+func (c Client) PostForm(url string, arg interface{}) Result {
+	header := make(http.Header)
+	header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return c.Post(url, arg, header)
 }
 
-func (c Client) doRequest(req *http.Request) Result {
+func (c Client) Do(req *http.Request) Result {
 	resp, err := c.inner.Do(req)
 	return Result{resp, err}
 }

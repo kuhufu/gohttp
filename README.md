@@ -47,3 +47,5 @@ client := flyhttp.New(&http.Client)
 client := flyhttp.NewBase("http://example.com", &http.Client{})
 client.Get("/path/path")
 ```
+
+更多请见测试文件
