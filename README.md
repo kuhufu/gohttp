@@ -18,7 +18,9 @@ flyhttp.Get("http://example.com", url.Values{
 ```
 ##### POST
 ```go
-flyhttp.Post("http://example.com", "application/json", strings.NewReader("data"))
+flyhttp.Post("http://example.com", strings.NewReader(`{"name":"jhon", "age":11}`), http.Header{
+	"content-type":{"application/json"}
+})
 ```
 
 ##### POST Forum
@@ -47,5 +49,38 @@ client := flyhttp.New(&http.Client)
 client := flyhttp.NewBase("http://example.com", &http.Client{})
 client.Get("/path/path")
 ```
+
+### 注意
+##### xxx.Get
+虽然使用了可变长参数，
+但`Get(url string, args ...interface())`至多三个实参。
+
+三个实参按 `(url, query_params, header)` 排列
+
+以下为实参允许的类型
+
+|名称|类型|
+|-----|----|
+|url|`string`|
+|query_params|`string`, `map[string][string]`, `url.Value`|
+|header|`http.Header`|
+>*query_params 会覆盖掉 url 中的查询参数*
+
+#### xxx.Post
+
+虽然使用了可变长参数，
+
+但`Post(url string, args ...interface())`至多三个实参。
+
+三个实参按 `(url, data, header)` 排列
+
+以下为实参允许的类型
+
+|名称|类型|
+|-----|----|
+|url|`string`|
+|data|`[]byte`, `string`, `io.Reader`|
+|header|`http.Header`|
+-------
 
 更多请见测试文件

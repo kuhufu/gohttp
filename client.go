@@ -61,20 +61,14 @@ func (c Client) Post(url string, args ...interface{}) Result {
 	var body io.Reader
 	if length >= 1 {
 		switch v := args[0].(type) {
-		case string:
-			body = strings.NewReader(v)
-		case map[string]string:
-			res := url2.Values{}
-			for key, value := range v {
-				res.Set(key, value)
-			}
-			body = strings.NewReader(res.Encode())
-		case url2.Values:
-			body = strings.NewReader(v.Encode())
 		case []byte:
 			body = bytes.NewReader(v)
+		case string:
+			body = strings.NewReader(v)
+		case io.Reader:
+			body = v
 		default:
-			return Result{nil, errors.New("wrong arg type, arg type must be string []byte url2.Values nil")}
+			return Result{nil, errors.New("wrong arg type, arg type must be string []byte or io.Reader")}
 		}
 	}
 
@@ -92,9 +86,21 @@ func (c Client) Post(url string, args ...interface{}) Result {
 }
 
 func (c Client) PostForm(url string, arg interface{}) Result {
+	var body interface{}
+	switch v := arg.(type) {
+	case map[string]string:
+		res := url2.Values{}
+		for key, value := range v {
+			res.Set(key, value)
+		}
+		body = strings.NewReader(res.Encode())
+	case url2.Values:
+		body = strings.NewReader(v.Encode())
+	}
+
 	header := make(http.Header)
 	header.Set("Content-Type", "application/x-www-form-urlencoded")
-	return c.Post(url, arg, header)
+	return c.Post(url, body, header)
 }
 
 func (c Client) Do(req *http.Request) Result {

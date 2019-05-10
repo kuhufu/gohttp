@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -53,8 +54,7 @@ func TestGet4(t *testing.T) {
 
 func TestPost(t *testing.T) {
 	header := http.Header{
-		"authorization": {"Miinno o44kJAQ3S_nAcl3uSe9GsD8_u7dV6mvT_1548283248"},
-		"referer":       {"https://servicewechat.com/wx0a48c468391428fd/19/page-frame.html"},
+		"content-type": {"application/x-www-form-urlencoded"},
 	}
 	data := url.Values{
 		"content": {"打卡"},  //评论内容
@@ -64,7 +64,7 @@ func TestPost(t *testing.T) {
 		"idol_id": {"1"},   //
 	}
 
-	s, err := client.Post("https://starmicro.happyelements.cn/v1/comment/comment", data, header).String()
+	s, err := client.Post("https://starmicro.happyelements.cn/v1/comment/comment", strings.NewReader(data.Encode()), header).String()
 	if err != nil {
 		t.Error(err)
 	}
