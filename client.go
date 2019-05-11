@@ -74,7 +74,13 @@ func (c Client) Post(url string, args ...interface{}) Result {
 
 	header := make(http.Header)
 	if length == 2 && args[1] != nil {
-		header = args[1].(http.Header)
+		switch v := args[1].(type) {
+		case http.Header:
+			header = v
+		case string:
+			header.Set("Content-Type", v)
+		}
+
 	}
 
 	req, err := http.NewRequest("GET", url, body)
@@ -97,10 +103,7 @@ func (c Client) PostForm(url string, arg interface{}) Result {
 	case url2.Values:
 		body = strings.NewReader(v.Encode())
 	}
-
-	header := make(http.Header)
-	header.Set("Content-Type", "application/x-www-form-urlencoded")
-	return c.Post(url, body, header)
+	return c.Post(url, body, "application/x-www-form-urlencoded")
 }
 
 func (c Client) Do(req *http.Request) Result {

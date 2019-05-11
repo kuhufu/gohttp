@@ -21,6 +21,8 @@ flyhttp.Get("http://example.com", url.Values{
 flyhttp.Post("http://example.com", strings.NewReader(`{"name":"jhon", "age":11}`), http.Header{
 	"content-type":{"application/json"}
 })
+equal
+flyhttp.Post("http://example.com", strings.NewReader(`{"name":"jhon", "age":11}`), "application/json")
 ```
 
 ##### POST Forum
@@ -72,7 +74,7 @@ client.Get("/path/path")
 
 但`Post(url string, args ...interface())`至多三个实参。
 
-三个实参按 `(url, data, header)` 排列
+三个实参按 `(url, data, header|contentType)` 排列
 
 以下为实参允许的类型
 
@@ -81,6 +83,7 @@ client.Get("/path/path")
 |url|`string`|
 |data|`[]byte`, `string`, `io.Reader`|
 |header|`http.Header`|
+|contentType|`string`|
 -------
 
 更多请见测试文件

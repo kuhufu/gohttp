@@ -72,6 +72,25 @@ func TestPost(t *testing.T) {
 	fmt.Println(s)
 }
 
+func TestPost2(t *testing.T) {
+	contentType := "application/x-www-form-urlencoded"
+
+	data := url.Values{
+		"content": {"打卡"},  //评论内容
+		"id":      {"621"}, //视频id
+		"pid":     {"0"},   //unknown
+		"type":    {"1"},   //unknown
+		"idol_id": {"1"},   //
+	}
+
+	s, err := client.Post("https://starmicro.happyelements.cn/v1/comment/comment", strings.NewReader(data.Encode()), contentType).String()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(s)
+}
+
 func TestPostForm(t *testing.T) {
 	data := url.Values{
 		"content": {"打卡"},  //评论内容
