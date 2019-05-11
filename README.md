@@ -74,7 +74,7 @@ client.Get("/path/path")
 |名称|类型|
 |-----|----|
 |url|`string`|
-|query_params|`string`, `map[string][string]`, `url.Value`|
+|query_params|`string`, `map[string][string]`, `url.Values`|
 |header|`http.Header`|
 >*query_params 会覆盖掉 url 中的查询参数*
 
