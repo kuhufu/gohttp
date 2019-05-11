@@ -23,6 +23,8 @@ flyhttp.Post("http://example.com", strings.NewReader(`{"name":"jhon", "age":11}`
 	"content-type":{"application/json"}
 })
 equal
+flyhttp.Post("http://example.com", `{"name":"jhon", "age":11}`, "application/json")
+flyhttp.Post("http://example.com", []byte(`{"name":"jhon", "age":11}`), "application/json")
 flyhttp.Post("http://example.com", strings.NewReader(`{"name":"jhon", "age":11}`), "application/json")
 ```
 

@@ -16,7 +16,7 @@ func New(c *http.Client) Client {
 func (c Client) Get(url string, args ...interface{}) (r Result) {
 	length := len(args)
 	if length > 2 {
-		return Result{nil, errors.New("args's length must equal 0 or 1")}
+		return Result{nil, errors.New("args's length must <= 2")}
 	}
 
 	var query string
@@ -54,8 +54,8 @@ func (c Client) Get(url string, args ...interface{}) (r Result) {
 
 func (c Client) Post(url string, args ...interface{}) Result {
 	length := len(args)
-	if args == nil {
-		return Result{nil, errors.New("no form data input")}
+	if length > 2 {
+		return Result{nil, errors.New("args's length must <= 2")}
 	}
 
 	var body io.Reader
