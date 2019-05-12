@@ -3,6 +3,7 @@ package flyhttp
 import (
 	"encoding/json"
 	"io/ioutil"
+	"net/http"
 )
 
 func (r Result) existError() bool {
@@ -56,3 +57,7 @@ func (r Result) Json() (data interface{}, err error) {
 	return v, nil
 }
 
+func (r Result) Resp() (resp *http.Response, err error) {
+	resp, err = r.resp, r.err
+	return
+}
