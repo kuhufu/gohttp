@@ -50,7 +50,7 @@ flyhttp.PostForum("http://example.com", map[string][string]{
 ```
 ### Client
 ```go
-client := flyhttp.New(&http.Client)
+client := flyhttp.New(&http.Client{})
 //just like above
 ```
 
