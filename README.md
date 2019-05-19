@@ -19,20 +19,17 @@ flyhttp.Get("http://example.com", url.Values{
 ```
 ##### POST
 ```go
-reader := strings.NewReader(`{"name":"jhon", "age":11}`)
-header := http.Header{"content-type":{"application/json"}}
-
-flyhttp.Post("http://example.com", reader, header)
-```
-```go
 str         := `{"name":"jhon", "age":11}`
 bytes       := []byte(`{"name":"jhon", "age":11}`
 reader      := strings.NewReader(`{"name":"jhon", "age":11}`)
 contentType := "application/json"
+header      := http.Header{"content-type":{"application/json"}}
 
 flyhttp.Post("http://example.com", str,     contentType)
 flyhttp.Post("http://example.com", bytes,   contentType)
 flyhttp.Post("http://example.com", reader,  contentType)
+
+flyhttp.Post("http://example.com", reader,  header)
 ```
 
 ##### POST Forum
