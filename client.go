@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-func New(c *http.Client) Client {
-	return Client{c}
+type Client struct {
+	inner *http.Client
 }
 
 func (c Client) Get(url string, args ...interface{}) (r Result) {
@@ -83,7 +83,7 @@ func (c Client) Post(url string, args ...interface{}) Result {
 
 	}
 
-	req, err := http.NewRequest("GET", url, body)
+	req, err := http.NewRequest("POST", url, body)
 	req.Header = header
 	if err != nil {
 		return Result{nil, err}
