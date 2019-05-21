@@ -6,6 +6,11 @@ import (
 	"net/http"
 )
 
+type Result struct {
+	resp *http.Response
+	err  error
+}
+
 func (r Result) existError() bool {
 	return r.err != nil || r.resp == nil
 }
@@ -60,4 +65,8 @@ func (r Result) Json() (data interface{}, err error) {
 func (r Result) Resp() (resp *http.Response, err error) {
 	resp, err = r.resp, r.err
 	return
+}
+
+func (r Result) Err() (err error) {
+	return r.err
 }
