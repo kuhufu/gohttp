@@ -10,20 +10,18 @@ func init() {
 	defaultClient = Client{http.DefaultClient}
 }
 
-type Client struct {
-	inner *http.Client
+func New(c *http.Client) Client {
+	return Client{c}
 }
 
-type BaseURLClient struct {
-	client Client
-	baseUrl string
+// 不要在 baseUrl 中包含 query params
+func NewBase(baseUrl string, c *http.Client) BaseURLClient {
+	return BaseURLClient{baseUrl: baseUrl, client: Client{c}}
 }
 
-type Result struct {
-	resp *http.Response
-	err  error
+func Base(baseUrl string) BaseURLClient {
+	return BaseURLClient{baseUrl: baseUrl, client: defaultClient}
 }
-
 
 func Get(url string, args ...interface{}) (r Result) {
 	return defaultClient.Get(url, args...)
