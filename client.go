@@ -110,3 +110,8 @@ func (c Client) Do(req *http.Request) Result {
 	resp, err := c.inner.Do(req)
 	return Result{resp, err}
 }
+
+//DeriveBase 生成一个与当前client关联的baseurlclient
+func (c Client) Base(baseUrl string) BaseURLClient {
+	return BaseURLClient{baseUrl: baseUrl, client: c}
+}

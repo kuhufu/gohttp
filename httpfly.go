@@ -16,11 +16,11 @@ func New(c *http.Client) Client {
 
 // 不要在 baseUrl 中包含 query params
 func NewBase(baseUrl string, c *http.Client) BaseURLClient {
-	return BaseURLClient{baseUrl: baseUrl, client: Client{c}}
+	return BaseURLClient{Client{c}, baseUrl}
 }
 
 func Base(baseUrl string) BaseURLClient {
-	return BaseURLClient{baseUrl: baseUrl, client: defaultClient}
+	return BaseURLClient{defaultClient, baseUrl}
 }
 
 func Get(url string, args ...interface{}) (r Result) {
