@@ -58,6 +58,10 @@ client := flyhttp.New(&http.Client{})
 client := flyhttp.NewBase("http://example.com", &http.Client{})
 client.Get("/path/path")
 ```
+使用内置的defaultClient，你可以这样做:
+```go
+client := flyhttp.Base("http://example.com")
+```
 
 ### 注意
 ##### xxx.Get
