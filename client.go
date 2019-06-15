@@ -3,6 +3,7 @@ package flyhttp
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	url2 "net/url"
@@ -16,7 +17,7 @@ type Client struct {
 func (c Client) Get(url string, args ...interface{}) (r Result) {
 	length := len(args)
 	if length > 2 {
-		return Result{nil, errors.New("args's length must <= 2")}
+		return Result{nil, errors.New("the length of args must <= 2")}
 	}
 
 	var query string
@@ -32,7 +33,13 @@ func (c Client) Get(url string, args ...interface{}) (r Result) {
 			query = res.Encode()
 		case url2.Values:
 			query = v.Encode()
+		default:
+			return Result{
+				resp: nil,
+				err:  errors.New(fmt.Sprintf("wrong args[0] type: %T, type must be map[string]string or url.Values", args[0])),
+			}
 		}
+
 	}
 
 	header := make(http.Header)
@@ -54,46 +61,43 @@ func (c Client) Get(url string, args ...interface{}) (r Result) {
 
 func (c Client) Post(url string, args ...interface{}) Result {
 	length := len(args)
-	if length > 2 {
-		return Result{nil, errors.New("args's length must <= 2")}
-	}
-
-	var body io.Reader
-	if length >= 1 {
-		switch v := args[0].(type) {
-		case []byte:
-			body = bytes.NewReader(v)
-		case string:
-			body = strings.NewReader(v)
-		case io.Reader:
-			body = v
-		default:
-			return Result{nil, errors.New("wrong arg type, arg type must be string []byte or io.Reader")}
-		}
+	if length != 2 {
+		return Result{nil, errors.New("the length of args must == 2, use the format: Post(url, contentType|headr, data")}
 	}
 
 	header := make(http.Header)
-	if length == 2 && args[1] != nil {
-		switch v := args[1].(type) {
-		case http.Header:
-			header = v
-		case string:
-			header.Set("Content-Type", v)
-		}
+	switch v := args[0].(type) {
+	case string:
+		header.Set("Content-Type", v)
+	case http.Header:
+		header = v
+	default:
+		return Result{nil, errors.New("wrong args[0] type, type must be http.Header or string")}
+	}
 
+	var body io.Reader
+	switch v := args[1].(type) {
+	case []byte:
+		body = bytes.NewReader(v)
+	case string:
+		body = strings.NewReader(v)
+	case io.Reader:
+		body = v
+	default:
+		return Result{nil, errors.New("wrong args[1] type, arg type must be string or []byte or io.Reader")}
 	}
 
 	req, err := http.NewRequest("POST", url, body)
-	req.Header = header
 	if err != nil {
 		return Result{nil, err}
 	}
+	req.Header = header
 	return c.Do(req)
 }
 
-func (c Client) PostForm(url string, arg interface{}) Result {
-	body := arg
-	switch v := arg.(type) {
+func (c Client) PostForm(url string, data interface{}) Result {
+	var body io.Reader
+	switch v := data.(type) {
 	case map[string]string:
 		res := url2.Values{}
 		for key, value := range v {
@@ -102,8 +106,10 @@ func (c Client) PostForm(url string, arg interface{}) Result {
 		body = strings.NewReader(res.Encode())
 	case url2.Values:
 		body = strings.NewReader(v.Encode())
+	default:
+		return Result{resp: nil, err: errors.New("data type must be map[string]string or url.Values")}
 	}
-	return c.Post(url, body, "application/x-www-form-urlencoded")
+	return c.Post(url, "application/x-www-form-urlencoded", body)
 }
 
 func (c Client) Do(req *http.Request) Result {

@@ -1,7 +1,6 @@
 package flyhttp
 
 import (
-	"io"
 	url2 "net/url"
 	p "path"
 )
@@ -16,20 +15,21 @@ func (b BaseURLClient) Get(path string, args ...interface{}) Result {
 	return b.client.Get(url, args...)
 }
 
-func (b BaseURLClient) PostForm(path string, arg interface{}) Result {
+func (b BaseURLClient) PostForm(path string, data interface{}) Result {
 	url := buildUrl(b.baseUrl, path)
-	return b.client.PostForm(url, arg)
+	return b.client.PostForm(url, data)
 }
 
-func (b BaseURLClient) Post(path, contentType string, body io.Reader) Result {
+//Post Post(url, contentType|header, data)
+func (b BaseURLClient) Post(path string, args ...interface{}) Result {
 	url := buildUrl(b.baseUrl, path)
-	return b.client.Post(url, contentType, body)
+	return b.client.Post(url, args...)
 }
 
 func buildUrl(baseUrl, path string) string {
-	parse1, _ := url2.Parse(baseUrl)
-	parse2, _ := url2.Parse(path)
-	parse1.Path = p.Join(parse1.Path, parse2.Path)
-	parse1.RawQuery = parse2.RawQuery
-	return parse1.String()
+	baseURL, _ := url2.Parse(baseUrl)
+	pathURL, _ := url2.Parse(path)
+	baseURL.Path = p.Join(baseURL.Path, pathURL.Path)
+	baseURL.RawQuery = pathURL.RawQuery
+	return baseURL.String()
 }
