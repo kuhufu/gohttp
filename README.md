@@ -25,11 +25,11 @@ reader      := strings.NewReader(`{"name":"jhon", "age":11}`)
 contentType := "application/json"
 header      := http.Header{"content-type":{"application/json"}}
 
-flyhttp.Post("http://example.com", str,     contentType)
-flyhttp.Post("http://example.com", bytes,   contentType)
-flyhttp.Post("http://example.com", reader,  contentType)
+flyhttp.Post("http://example.com", contentType, str)
+flyhttp.Post("http://example.com", contentType, bytes)
+flyhttp.Post("http://example.com", contentType, reader)
 
-flyhttp.Post("http://example.com", reader,  header)
+flyhttp.Post("http://example.com", header,      reader)
 ```
 
 ##### POST Forum
@@ -66,7 +66,7 @@ client := flyhttp.Base("http://example.com")
 ### 注意
 ##### xxx.Get
 虽然使用了可变长参数，
-但`Get(url string, args ...interface())`至多三个实参。
+但`Get(url string, args ...interface())`至多三个实参，至少一个实参。
 
 三个实参按 `(url, query_params, header)` 排列
 
@@ -83,18 +83,18 @@ client := flyhttp.Base("http://example.com")
 
 虽然使用了可变长参数，
 
-但`Post(url string, args ...interface())`至多三个实参。
+但`Post(url string, args ...interface())`**必须有三个实参**。
 
-三个实参按 `(url, data, header|contentType)` 排列
+三个实参按 `(url, contentType|header, data)` 排列
 
 以下为实参允许的类型
 
 |名称|类型|
 |-----|----|
 |url|`string`|
-|data|`[]byte`, `string`, `io.Reader`|
 |header|`http.Header`|
 |contentType|`string`|
+|data|`[]byte`, `string`, `io.Reader`|
 -------
 
 更多请见测试文件
