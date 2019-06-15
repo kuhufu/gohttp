@@ -10,39 +10,21 @@ var bc = NewBase("https://starmicro.happyelements.cn/v1", http.DefaultClient)
 var bc2 = Base("https://starmicro.happyelements.cn/v1")
 
 func TestInstance_Get(t *testing.T) {
-	values := []struct {
-		args   []interface{}
-		expect bool
+	tests := []struct {
+		args []interface{}
+		want bool
 	}{
-		{
-			args:   nil,
-			expect: true,
-		},
-		{
-			args:   []interface{}{nil},
-			expect: false,
-		},
-		{
-			args:   []interface{}{nil, nil},
-			expect: false,
-		},
-		{
-			args:   []interface{}{"page=1"},
-			expect: true,
-		},
-		{
-			args:   []interface{}{map[string]string{"name": "jhon", "age": "1"}},
-			expect: true,
-		},
-		{
-			args:   []interface{}{url.Values{"name": {"jhon"}, "age": {"1"}}},
-			expect: true,
-		},
+		{want: true, args: nil},
+		{want: false, args: []interface{}{nil}},
+		{want: false, args: []interface{}{nil, nil}},
+		{want: true, args: []interface{}{"page=1"}},
+		{want: true, args: []interface{}{map[string]string{"name": "jhon", "age": "1"}}},
+		{want: true, args: []interface{}{url.Values{"name": {"jhon"}, "age": {"1"}}}},
 	}
 
-	for i, v := range values {
+	for i, v := range tests {
 		_, err := bc.Get("/idol/idollist", v.args...).String()
-		if (err == nil) != v.expect {
+		if (err == nil) != v.want {
 			t.Error(i, err)
 		}
 	}

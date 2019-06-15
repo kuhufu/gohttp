@@ -72,7 +72,7 @@ func (c Client) Post(url string, args ...interface{}) Result {
 	case http.Header:
 		header = v
 	default:
-		return Result{nil, errors.New("wrong args[0] type, type must be http.Header or string")}
+		return Result{nil, errors.New(fmt.Sprintf("wrong args[0] type: %T, wrong args[0] type, type must be http.Header or string", args[0]))}
 	}
 
 	var body io.Reader
@@ -84,7 +84,7 @@ func (c Client) Post(url string, args ...interface{}) Result {
 	case io.Reader:
 		body = v
 	default:
-		return Result{nil, errors.New("wrong args[1] type, arg type must be string or []byte or io.Reader")}
+		return Result{nil, errors.New(fmt.Sprintf("wrong args[1] type: %T, wrong args[1] type, arg type must be string or []byte or io.Reader", args[1]))}
 	}
 
 	req, err := http.NewRequest("POST", url, body)
@@ -107,7 +107,7 @@ func (c Client) PostForm(url string, data interface{}) Result {
 	case url2.Values:
 		body = strings.NewReader(v.Encode())
 	default:
-		return Result{resp: nil, err: errors.New("data type must be map[string]string or url.Values")}
+		return Result{resp: nil, err: errors.New(fmt.Sprintf("wrong data type: %T, data type must be map[string]string or url.Values", data))}
 	}
 	return c.Post(url, "application/x-www-form-urlencoded", body)
 }

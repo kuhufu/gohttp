@@ -12,47 +12,23 @@ var client = New(&http.Client{})
 
 func TestClient_Get(t *testing.T) {
 	baseURL := "https://starmicro.happyelements.cn/v1"
-	testSet := []struct {
-		args   []interface{}
-		expect bool
+	tests := []struct {
+		args []interface{}
+		want bool
 	}{
-		{
-			args:   nil,
-			expect: true,
-		},
-		{
-			args:   []interface{}{nil},
-			expect: false,
-		},
-		{
-			args:   []interface{}{nil, nil},
-			expect: false,
-		},
-		{
-			args:   []interface{}{nil, nil, nil},
-			expect: false,
-		},
-		{
-			args:   []interface{}{"page=1"},
-			expect: true,
-		},
-		{
-			args:   []interface{}{"page=1", http.Header{}},
-			expect: true,
-		},
-		{
-			args:   []interface{}{map[string]string{"name": "jhon", "age": "1"}},
-			expect: true,
-		},
-		{
-			args:   []interface{}{url.Values{"name": {"jhon"}, "age": {"1"}}},
-			expect: true,
-		},
+		{want: true, args: nil},
+		{want: false, args: []interface{}{nil}},
+		{want: false, args: []interface{}{nil, nil}},
+		{want: false, args: []interface{}{nil, nil, nil}},
+		{want: true, args: []interface{}{"page=1"}},
+		{want: true, args: []interface{}{"page=1", http.Header{}}},
+		{want: true, args: []interface{}{map[string]string{"name": "jhon", "age": "1"}}},
+		{want: true, args: []interface{}{url.Values{"name": {"jhon"}, "age": {"1"}}}},
 	}
 
-	for i, v := range testSet {
+	for i, v := range tests {
 		_, err := bc.Get(baseURL+"/idol/idollist", v.args...).String()
-		if (err == nil) != v.expect {
+		if (err == nil) != v.want {
 			t.Error(i, err)
 		}
 	}
@@ -62,53 +38,26 @@ func TestPost(t *testing.T) {
 	header := http.Header{
 		"content-type": {"application/x-www-form-urlencoded"},
 	}
-	testSet := []struct {
-		args   []interface{}
-		expect bool
+	tests := []struct {
+		args []interface{}
+		want bool
 	}{
-		{
-			args:   nil,
-			expect: false,
-		},
-		{
-			args:   []interface{}{nil},
-			expect: false,
-		},
-		{
-			args:   []interface{}{"id=1"},
-			expect: false,
-		},
-		{
-			args:   []interface{}{nil, nil},
-			expect: false,
-		},
-		{
-			args:   []interface{}{[]byte("id=1"), header},
-			expect: false,
-		},
-		{
-			args:   []interface{}{header, []byte("id=1")},
-			expect: true,
-		},
-		{
-			args:   []interface{}{header, nil},
-			expect: true,
-		},
-		{
-			args:   []interface{}{"application/x-www-form-urlencoded", "id=1"},
-			expect: true,
-		},
-		{
-			args:   []interface{}{header, strings.NewReader("id=1")},
-			expect: true,
-		},
+		{want: false, args: nil},
+		{want: false, args: []interface{}{nil}},
+		{want: false, args: []interface{}{"id=1"}},
+		{want: false, args: []interface{}{nil, nil}},
+		{want: false, args: []interface{}{[]byte("id=1"), header}},
+		{want: true, args: []interface{}{header, []byte("id=1")}},
+		{want: false, args: []interface{}{header, nil}},
+		{want: true, args: []interface{}{"application/x-www-form-urlencoded", "id=1"}},
+		{want: true, args: []interface{}{header, strings.NewReader("id=1")}},
 	}
 
-	for i, v := range testSet {
+	for i, v := range tests {
 		_, err := client.Post(
 			"https://starmicro.happyelements.cn/v1/comment/comment",
 			v.args...).String()
-		if (err == nil) != v.expect {
+		if (err == nil) != v.want {
 			t.Error(i, err)
 		}
 	}
