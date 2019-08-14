@@ -2,6 +2,7 @@ package flyhttp
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -12,6 +13,12 @@ import (
 
 type Client struct {
 	inner *http.Client
+}
+
+var _ Interface = Client{}
+
+func New(c *http.Client) Client {
+	return Client{c}
 }
 
 func (c Client) Get(url string, args ...interface{}) (r Result) {
@@ -39,7 +46,6 @@ func (c Client) Get(url string, args ...interface{}) (r Result) {
 				err:  errors.New(fmt.Sprintf("wrong args[0] type: %T, type must be map[string]string or url.Values", args[0])),
 			}
 		}
-
 	}
 
 	header := make(http.Header)
@@ -112,12 +118,18 @@ func (c Client) PostForm(url string, data interface{}) Result {
 	return c.Post(url, "application/x-www-form-urlencoded", body)
 }
 
+func (c Client) PostJson(url string, data interface{}) Result {
+	res, _ := json.Marshal(data)
+	body := bytes.NewReader(res)
+	return c.Post(url, "application/json", body)
+}
+
 func (c Client) Do(req *http.Request) Result {
 	resp, err := c.inner.Do(req)
 	return Result{resp, err}
 }
 
-//Base 生成一个与当前client关联的baseurlclient
+//Base 生成一个与当前client关联的 BaseURLClient
 func (c Client) Base(baseUrl string) BaseURLClient {
 	return BaseURLClient{baseUrl: baseUrl, client: c}
 }

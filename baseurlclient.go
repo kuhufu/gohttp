@@ -1,6 +1,7 @@
 package flyhttp
 
 import (
+	"net/http"
 	url2 "net/url"
 	p "path"
 )
@@ -8,6 +9,17 @@ import (
 type BaseURLClient struct {
 	client  Client
 	baseUrl string
+}
+
+var _ BaseURLClient = BaseURLClient{}
+
+// 不要在 baseUrl 中包含 query params
+func NewBase(baseUrl string, c *http.Client) BaseURLClient {
+	return BaseURLClient{Client{c}, baseUrl}
+}
+
+func Base(baseUrl string) BaseURLClient {
+	return BaseURLClient{defaultClient, baseUrl}
 }
 
 func (b BaseURLClient) Get(path string, args ...interface{}) Result {

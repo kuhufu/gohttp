@@ -4,23 +4,13 @@ import (
 	"net/http"
 )
 
-var defaultClient Client
+var defaultClient = Client{http.DefaultClient}
 
-func init() {
-	defaultClient = Client{http.DefaultClient}
-}
-
-func New(c *http.Client) Client {
-	return Client{c}
-}
-
-// 不要在 baseUrl 中包含 query params
-func NewBase(baseUrl string, c *http.Client) BaseURLClient {
-	return BaseURLClient{Client{c}, baseUrl}
-}
-
-func Base(baseUrl string) BaseURLClient {
-	return BaseURLClient{defaultClient, baseUrl}
+type Interface interface {
+	Get(url string, args ...interface{}) Result
+	Post(url string, args ...interface{}) Result
+	PostForm(url string, args interface{}) Result
+	PostJson(url string, args interface{}) Result
 }
 
 func Get(url string, args ...interface{}) (r Result) {
@@ -33,4 +23,8 @@ func Post(url string, args ...interface{}) (r Result) {
 
 func PostForm(url string, arg interface{}) Result {
 	return defaultClient.PostForm(url, arg)
+}
+
+func PostJson(url string, arg interface{}) Result {
+	return defaultClient.PostJson(url, arg)
 }
