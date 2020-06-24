@@ -1,100 +1,126 @@
 # flyhttp
-### Example
-##### GET
-`http://example.com?id=1&page=2`
+
+#### 初始化客户端
+
+1. 设置公共header
+
 ```go
-flyhttp.Get("http://example.com?id=1&page=2")
-
-flyhttp.Get("http://example.com", "id=1&page=2")
-
-flyhttp.Get("http://example.com", map[string][string]{
-	"id":   "1",
-	"page": "2",
-})
-
-flyhttp.Get("http://example.com", url.Values{
-	"id":   {"1"},
-	"page": {"2"},
-})
-```
-##### POST
-```go
-str         := `{"name":"jhon", "age":11}`
-bytes       := []byte(`{"name":"jhon", "age":11}`
-reader      := strings.NewReader(`{"name":"jhon", "age":11}`)
-contentType := "application/json"
-header      := http.Header{"content-type":{"application/json"}}
-
-flyhttp.Post("http://example.com", contentType, str)
-flyhttp.Post("http://example.com", contentType, bytes)
-flyhttp.Post("http://example.com", contentType, reader)
-
-flyhttp.Post("http://example.com", header,      reader)
+cli := flyhttp.New(
+    flyhttp.SetHeader("Authorization", "{token}"),//将在后续请求中作为公共header
+)
 ```
 
-##### POST Forum
+2. 设置host
+
 ```go
-flyhttp.PostForum("http://example.com", url.Values{
-	"name": {"tom"},
-	"age":  {"11"},
-})
+cli := flyhttp.New(
+    flyhttp.WithHost("http://example.com"),
+)
 
-flyhttp.PostForum("http://example.com", map[string][string]{
-	"name": "tom",
-	"age":  "11",
-})
-
+// GET http://example.com/foo/bar?name=kuhufu&age=11
+_, err := cli.Get("/foo/bar",
+    flyhttp.QueryParams(url.Values{
+        "name": {"kuhufu"},
+        "age":  {"11"},
+    }),
+)
 ```
-### Client
+
+3. 创建子分组
+
 ```go
-client := flyhttp.New(&http.Client{})
-//just like above
+foo := cli.Group("/foo")
+_, err := foo.Get("/bar",
+    flyhttp.QueryParams(url.Values{
+        "name": {"kuhufu"},
+        "age":  {"11"},
+    }),
+)
 ```
 
 
-### BaseURLClient
-`http://example.com/path/path`
+
+#### Get
+
+*GET http://example.com?name=kuhufu&age=11*
+
 ```go
-client := flyhttp.NewBase("http://example.com", &http.Client{})
-client.Get("/path/path")
-```
-使用内置的defaultClient，你可以这样做:
-```go
-client := flyhttp.Base("http://example.com")
+cli := flyhttp.New()
 ```
 
-### 注意
-##### xxx.Get
-虽然使用了可变长参数，
-但`Get(url string, args ...interface())`至多三个实参，至少一个实参。
+方式一
 
-三个实参按 `(url, query_params, header)` 排列
+```go
+resp, err := cli.Get("http://example.com?name=kuhufu&age=11")
+```
 
-以下为实参允许的类型
+方式二
 
-|名称|类型|
-|-----|----|
-|url|`string`|
-|query_params|`string`, `map[string][string]`, `url.Values`|
-|header|`http.Header`|
->*query_params 会覆盖掉 url 中的查询参数*
+```go
+resp, err := cli.Get("http://example.com",
+    flyhttp.QueryParams(url.Values{
+        "name": {"kuhufu"},
+        "age":  {"11"},
+    }),
+)
+```
 
-#### xxx.Post
+方式三
 
-虽然使用了可变长参数，
+```go
+resp, err := cli.Get("http://example.com?name=kuhufu",
+    flyhttp.QueryParams(url.Values{
+        "age": {"11"},
+    }),
+)
+```
 
-但`Post(url string, args ...interface())`**必须有三个实参**。
 
-三个实参按 `(url, contentType|header, data)` 排列
+#### Post
+```go
+resp, err := cli.Post("http://example.com",
+    flyhttp.Header("Content-Type", "application/json"),
+    flyhttp.Body([]byte(`{"name":"kuhufu","age":11}`)),
+)
+```
 
-以下为实参允许的类型
+通过 `JSONBody` 将 `Content-Type` 设置 为 `application/json`，并将对象序列化为json字符串后作为body
 
-|名称|类型|
-|-----|----|
-|url|`string`|
-|header|`http.Header`|
-|contentType|`string`|
-|data|`[]byte`, `string`, `io.Reader`|
--------
+```go
+resp, err := cli.Post("http://example.com",
+    flyhttp.JSONBody(map[string]interface{}{
+        "name": "kuhufu",
+        "age":  11,
+    }),
+)
+```
 
-更多请见测试文件
+通过 `FormBody` 将 `Content-Type` 设置为 `application/www-urlencode-form`
+
+```go
+resp, err := cli.Post("http://example.com",
+    flyhttp.FormBody(url.Values{
+        "name": {"kuhufu"},
+        "age":  {"11"},
+    }),
+)
+```
+
+
+
+#### response 的快捷操作
+
+```go
+res := flyhttp.Wrap(resp, err)
+
+//获取body字节
+bytes, err := res.Bytes()
+
+//获取body并转为string
+str, err := res.String()
+
+//JSON反序列化
+var v map[string]interface{}
+err := res.JSON(&v)
+```
+

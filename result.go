@@ -11,60 +11,58 @@ type Result struct {
 	err  error
 }
 
-func (r Result) existError() bool {
-	return r.err != nil || r.resp == nil
+func Wrap(response *http.Response, err error) Result {
+	return Result{
+		resp: response,
+		err:  err,
+	}
 }
 
 func (r Result) Bytes() (data []byte, err error) {
-	if r.resp != nil {
-		defer r.resp.Body.Close()
+	resp, err := r.resp, r.err
+	if err != nil {
+		return nil, err
 	}
-	if r.existError() {
-		return nil, r.err
-	}
+	defer resp.Body.Close()
 
-	return ioutil.ReadAll(r.resp.Body)
+	return ioutil.ReadAll(resp.Body)
 }
 
 func (r Result) String() (data string, err error) {
-	if r.resp != nil {
-		defer r.resp.Body.Close()
+	resp, err := r.resp, r.err
+	if err != nil {
+		return "", err
 	}
-	if r.existError() {
-		return "", r.err
-	}
+	defer resp.Body.Close()
 
-	bytes, err := ioutil.ReadAll(r.resp.Body)
+	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
 	return string(bytes), nil
 }
 
-func (r Result) Json() (data interface{}, err error) {
-	if r.resp != nil {
-		defer r.resp.Body.Close()
+func (r Result) JSON(v interface{}) error {
+	resp, err := r.resp, r.err
+	if err != nil {
+		return err
 	}
-	if r.existError() {
-		return "", r.err
+	defer resp.Body.Close()
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
 	}
 
-	bytes, err := ioutil.ReadAll(r.resp.Body)
+	err = json.Unmarshal(bytes, v)
 	if err != nil {
-		return nil, err
+		return err
 	}
-
-	var v interface{}
-	err = json.Unmarshal(bytes, &v)
-	if err != nil {
-		return nil, err
-	}
-	return v, nil
+	return nil
 }
 
-func (r Result) Resp() (resp *http.Response, err error) {
-	resp, err = r.resp, r.err
-	return
+func (r Result) Raw() (resp *http.Response, err error) {
+	return r.resp, r.err
 }
 
 func (r Result) Err() (err error) {
