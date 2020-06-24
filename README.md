@@ -6,7 +6,10 @@
 
 ```go
 cli := flyhttp.New(
-    flyhttp.SetHeader("Authorization", "{token}"),//将在后续请求中作为公共header
+    flyhttp.WithHost("http://example.com"),
+    flyhttp.WithHeader(http.Header{
+        "Authorization": {"{token}"}, //将在后续请求中作为公共header
+    }),
 )
 ```
 

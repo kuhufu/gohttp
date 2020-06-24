@@ -1,6 +1,7 @@
 package test
 
 import (
+	"net/http"
 	"net/url"
 	"testing"
 )
@@ -9,7 +10,9 @@ import "github.com/kuhufu/flyhttp"
 func Test_Get(t *testing.T) {
 	cli := flyhttp.New(
 		flyhttp.WithHost("http://example.com"),
-		flyhttp.SetHeader("Authorization", "{token}"),
+		flyhttp.WithHeader(http.Header{
+			"Authorization": {"{token}"},
+		}),
 	)
 
 	foo := cli.Group("/foo")
