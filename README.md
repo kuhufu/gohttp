@@ -101,7 +101,7 @@ resp, err := flyhttp.Post("http://example.com",
 
 
 
-### response 的快捷操作
+### 响应的快捷操作
 
 ```go
 res := flyhttp.Wrap(flyhttp.Get("http://example.com"))
