@@ -6,7 +6,6 @@
 
 ```go
 cli := flyhttp.New(
-    flyhttp.WithBase("http://example.com"),
     flyhttp.WithHeader(http.Header{
         "Authorization": {"{token}"}, //将在后续请求中作为公共header
     }),
@@ -20,34 +19,25 @@ cli := flyhttp.New(
     flyhttp.WithBase("http://example.com"),
 )
 
-// GET http://example.com/foo/bar?name=kuhufu&age=11
-_, err := cli.Get("/foo/bar",
-    flyhttp.Query(url.Values{
-        "name": {"kuhufu"},
-        "age":  {"11"},
-    }),
-)
+// GET http://example.com/foo/bar
+_, err := cli.Get("/foo/bar")
 ```
 
 3. 创建子分组
 
 ```go
-foo := cli.Group("/foo")
-_, err := foo.Get("/bar",
-    flyhttp.Query(url.Values{
-        "name": {"kuhufu"},
-        "age":  {"11"},
-    }),
-)
+// GET http://example.com/foo/bar
+foo := cli.Group("http://example.com")
+
+_, err := foo.Get("/foo/bar")
 ```
 
 
 
 #### Get
 
-*GET http://example.com?name=kuhufu&age=11*
-
 ```go
+//GET http://example.com?name=kuhufu&age=11
 import "github.com/kuhufu/flyhttp"
 ```
 
