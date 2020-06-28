@@ -11,7 +11,7 @@ import (
 
 type RequestOption func(req *http.Request)
 
-func QueryParams(params url.Values) RequestOption {
+func Query(params url.Values) RequestOption {
 	return func(req *http.Request) {
 		if len(req.URL.RawQuery) != 0 {
 			req.URL.RawQuery += "&" + params.Encode()

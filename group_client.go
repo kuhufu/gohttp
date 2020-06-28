@@ -1,17 +1,14 @@
 package flyhttp
 
 import (
-	"fmt"
 	"net/http"
-	"path"
 )
 
 type GroupClient struct {
 	parent *GroupClient
-	cli    *http.Client
-	header http.Header
-	host   string
-	base   string
+	cli    *http.Client //std http client
+	header http.Header  //public header
+	base   string       //base url
 }
 
 func New(opts ...ClientOption) *GroupClient {
@@ -49,7 +46,7 @@ func (cli *GroupClient) Header() http.Header {
 
 func (cli *GroupClient) Group(relativePath string, opts ...ClientOption) *GroupClient {
 	newCli := cli.child()
-	newCli.base = path.Join(newCli.base, relativePath)
+	newCli.base = newCli.base + relativePath
 
 	for _, opt := range opts {
 		opt(newCli)
@@ -59,10 +56,10 @@ func (cli *GroupClient) Group(relativePath string, opts ...ClientOption) *GroupC
 }
 
 func (cli *GroupClient) buildUrl(url string) string {
-	if cli.host == "" {
+	if cli.base == "" {
 		return url
 	} else {
-		return fmt.Sprintf("%v%v", cli.host, path.Join(cli.base, url))
+		return cli.base + url
 	}
 }
 

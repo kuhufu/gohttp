@@ -6,23 +6,23 @@
 
 ```go
 cli := flyhttp.New(
-    flyhttp.WithHost("http://example.com"),
+    flyhttp.WithBase("http://example.com"),
     flyhttp.WithHeader(http.Header{
         "Authorization": {"{token}"}, //将在后续请求中作为公共header
     }),
 )
 ```
 
-2. 设置host
+2. 设置 base url
 
 ```go
 cli := flyhttp.New(
-    flyhttp.WithHost("http://example.com"),
+    flyhttp.WithBase("http://example.com"),
 )
 
 // GET http://example.com/foo/bar?name=kuhufu&age=11
 _, err := cli.Get("/foo/bar",
-    flyhttp.QueryParams(url.Values{
+    flyhttp.Query(url.Values{
         "name": {"kuhufu"},
         "age":  {"11"},
     }),
@@ -34,7 +34,7 @@ _, err := cli.Get("/foo/bar",
 ```go
 foo := cli.Group("/foo")
 _, err := foo.Get("/bar",
-    flyhttp.QueryParams(url.Values{
+    flyhttp.Query(url.Values{
         "name": {"kuhufu"},
         "age":  {"11"},
     }),
@@ -61,7 +61,7 @@ resp, err := flyhttp.Get("http://example.com?name=kuhufu&age=11")
 
 ```go
 resp, err := flyhttp.Get("http://example.com",
-    flyhttp.QueryParams(url.Values{
+    flyhttp.Query(url.Values{
         "name": {"kuhufu"},
         "age":  {"11"},
     }),
@@ -72,7 +72,7 @@ resp, err := flyhttp.Get("http://example.com",
 
 ```go
 resp, err := flyhttp.Get("http://example.com?name=kuhufu",
-    flyhttp.QueryParams(url.Values{
+    flyhttp.Query(url.Values{
         "age": {"11"},
     }),
 )

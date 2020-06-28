@@ -11,3 +11,9 @@ func TestGet(t *testing.T) {
 
 	fmt.Println(res.String())
 }
+
+func TestGroup(t *testing.T) {
+	cli := flyhttp.Group("http://example.com")
+	res := flyhttp.Wrap(cli.Get("/foo"))
+	fmt.Println(res.String())
+}

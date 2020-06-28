@@ -4,12 +4,6 @@ import "net/http"
 
 type ClientOption func(cli *GroupClient)
 
-func WithHost(host string) ClientOption {
-	return func(cli *GroupClient) {
-		cli.host = host
-	}
-}
-
 func WithHttpClient(client *http.Client) ClientOption {
 	return func(cli *GroupClient) {
 		cli.cli = client
