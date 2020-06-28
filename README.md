@@ -34,7 +34,7 @@ _, err := foo.Get("/foo/bar")
 
 
 
-### Get
+### Get请求
 
 ```go
 //GET http://example.com?name=kuhufu&age=11
@@ -69,7 +69,7 @@ resp, err := flyhttp.Get("http://example.com?name=kuhufu",
 ```
 
 
-### Post
+### Post请求
 ```go
 resp, err := flyhttp.Post("http://example.com",
     flyhttp.Header("Content-Type", "application/json"),
