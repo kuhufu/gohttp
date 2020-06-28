@@ -11,13 +11,6 @@ type Result struct {
 	err  error
 }
 
-func Wrap(response *http.Response, err error) Result {
-	return Result{
-		resp: response,
-		err:  err,
-	}
-}
-
 func (r Result) Bytes() (data []byte, err error) {
 	resp, err := r.resp, r.err
 	if err != nil {
