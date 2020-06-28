@@ -54,7 +54,7 @@ func JSONBody(obj interface{}) RequestOption {
 			panic(err)
 		}
 
-		Header("Content-Type", "application/json;charset=utf-8")(req)
+		Header("Content-Type", "application/json")(req)
 		req.Body = ioutil.NopCloser(bytes.NewReader(marshal))
 	}
 }

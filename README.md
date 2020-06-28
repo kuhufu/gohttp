@@ -48,19 +48,19 @@ _, err := foo.Get("/bar",
 *GET http://example.com?name=kuhufu&age=11*
 
 ```go
-cli := flyhttp.New()
+import "github.com/kuhufu/flyhttp"
 ```
 
 方式一
 
 ```go
-resp, err := cli.Get("http://example.com?name=kuhufu&age=11")
+resp, err := flyhttp.Get("http://example.com?name=kuhufu&age=11")
 ```
 
 方式二
 
 ```go
-resp, err := cli.Get("http://example.com",
+resp, err := flyhttp.Get("http://example.com",
     flyhttp.QueryParams(url.Values{
         "name": {"kuhufu"},
         "age":  {"11"},
@@ -71,7 +71,7 @@ resp, err := cli.Get("http://example.com",
 方式三
 
 ```go
-resp, err := cli.Get("http://example.com?name=kuhufu",
+resp, err := flyhttp.Get("http://example.com?name=kuhufu",
     flyhttp.QueryParams(url.Values{
         "age": {"11"},
     }),
@@ -81,7 +81,7 @@ resp, err := cli.Get("http://example.com?name=kuhufu",
 
 #### Post
 ```go
-resp, err := cli.Post("http://example.com",
+resp, err := flyhttp.Post("http://example.com",
     flyhttp.Header("Content-Type", "application/json"),
     flyhttp.Body([]byte(`{"name":"kuhufu","age":11}`)),
 )
@@ -90,7 +90,7 @@ resp, err := cli.Post("http://example.com",
 通过 `JSONBody` 将 `Content-Type` 设置 为 `application/json`，并将对象序列化为json字符串后作为body
 
 ```go
-resp, err := cli.Post("http://example.com",
+resp, err := flyhttp.Post("http://example.com",
     flyhttp.JSONBody(map[string]interface{}{
         "name": "kuhufu",
         "age":  11,
@@ -98,10 +98,10 @@ resp, err := cli.Post("http://example.com",
 )
 ```
 
-通过 `FormBody` 将 `Content-Type` 设置为 `application/www-urlencode-form`
+通过 `FormBody` 将 `Content-Type` 设置为 `application/x-www-form-urlencoded`
 
 ```go
-resp, err := cli.Post("http://example.com",
+resp, err := flyhttp.Post("http://example.com",
     flyhttp.FormBody(url.Values{
         "name": {"kuhufu"},
         "age":  {"11"},
