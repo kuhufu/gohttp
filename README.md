@@ -114,7 +114,7 @@ resp, err := flyhttp.Post("http://example.com",
 #### response 的快捷操作
 
 ```go
-res := flyhttp.Wrap(resp, err)
+res := flyhttp.Wrap(flyhttp.Get("http://example.com"))
 
 //获取body字节
 bytes, err := res.Bytes()
