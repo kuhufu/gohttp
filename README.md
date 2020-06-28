@@ -1,6 +1,6 @@
 # flyhttp
 
-#### 初始化客户端
+### 初始化客户端
 
 1. 设置公共header
 
@@ -34,7 +34,7 @@ _, err := foo.Get("/foo/bar")
 
 
 
-#### Get
+### Get
 
 ```go
 //GET http://example.com?name=kuhufu&age=11
@@ -69,7 +69,7 @@ resp, err := flyhttp.Get("http://example.com?name=kuhufu",
 ```
 
 
-#### Post
+### Post
 ```go
 resp, err := flyhttp.Post("http://example.com",
     flyhttp.Header("Content-Type", "application/json"),
@@ -101,7 +101,7 @@ resp, err := flyhttp.Post("http://example.com",
 
 
 
-#### response 的快捷操作
+### response 的快捷操作
 
 ```go
 res := flyhttp.Wrap(flyhttp.Get("http://example.com"))
