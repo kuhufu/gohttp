@@ -3,6 +3,7 @@ package flyhttp
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -21,9 +22,9 @@ func Query(params url.Values) RequestOption {
 	}
 }
 
-func Body(body []byte) RequestOption {
+func Cookie(c *http.Cookie) RequestOption {
 	return func(req *http.Request) {
-		req.Body = ioutil.NopCloser(bytes.NewReader(body))
+		req.AddCookie(c)
 	}
 }
 
@@ -38,6 +39,22 @@ func Header(key, val string) RequestOption {
 
 func ContentType(contentType string) RequestOption {
 	return Header("Content-Type", contentType)
+}
+
+func Body(body []byte) RequestOption {
+	return func(req *http.Request) {
+		req.Body = ioutil.NopCloser(bytes.NewReader(body))
+	}
+}
+
+func ReaderBody(r io.Reader) RequestOption {
+	return func(req *http.Request) {
+		if readCloser, ok := r.(io.ReadCloser); ok {
+			req.Body = readCloser
+		} else {
+			req.Body = ioutil.NopCloser(r)
+		}
+	}
 }
 
 func FormBody(form url.Values) RequestOption {
