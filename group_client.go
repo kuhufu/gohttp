@@ -5,7 +5,6 @@ import (
 )
 
 type GroupClient struct {
-	parent *GroupClient
 	cli    *http.Client //std http client
 	header http.Header  //public header
 	base   string       //base url
@@ -23,10 +22,9 @@ func New(opts ...ClientOption) *GroupClient {
 	return cli
 }
 
-func (cli *GroupClient) child() *GroupClient {
+func (cli *GroupClient) copy() *GroupClient {
 	newCli := *cli
 	newCli.header = cli.header.Clone()
-	newCli.parent = cli
 
 	return &newCli
 }
@@ -45,7 +43,7 @@ func (cli *GroupClient) Header() http.Header {
 }
 
 func (cli *GroupClient) Group(relativePath string, opts ...ClientOption) *GroupClient {
-	newCli := cli.child()
+	newCli := cli.copy()
 	newCli.base = newCli.base + relativePath
 
 	for _, opt := range opts {
