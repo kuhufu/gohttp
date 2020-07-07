@@ -35,6 +35,7 @@ func AddHeader(key, val string) ClientOption {
 }
 
 func AddCookie(key, val string) ClientOption {
+	val = key + "=" + val
 	return func(cli *GroupClient) {
 		header := cli.getOrCreateHeader()
 		if c := header.Get("Cookie"); c != "" {
