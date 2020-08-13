@@ -5,19 +5,19 @@ import (
 	"net/url"
 	"testing"
 )
-import "github.com/kuhufu/flyhttp"
+import "github.com/kuhufu/gohttp"
 
 func Test_Get(t *testing.T) {
-	cli := flyhttp.New(
-		flyhttp.WithBase("http://example.com"),
-		flyhttp.WithHeader(http.Header{
+	cli := gohttp.New(
+		gohttp.WithBase("http://example.com"),
+		gohttp.WithHeader(http.Header{
 			"Authorization": {"{token}"},
 		}),
 	)
 
 	foo := cli.Group("/foo")
 	_, err := foo.Get("/bar",
-		flyhttp.Query(url.Values{
+		gohttp.Query(url.Values{
 			"name": {"kuhufu"},
 			"age":  {"11"},
 		}),
@@ -28,7 +28,7 @@ func Test_Get(t *testing.T) {
 
 	// GET http://example.com/foo?name=kuhufu&age=11
 	_, err = cli.Get("/foo/bar",
-		flyhttp.Query(url.Values{
+		gohttp.Query(url.Values{
 			"name": {"kuhufu"},
 			"age":  {"11"},
 		}),

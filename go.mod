@@ -1,3 +1,3 @@
-module github.com/kuhufu/flyhttp
+module github.com/kuhufu/gohttp
 
 go 1.12

@@ -1,12 +1,12 @@
-# flyhttp
+# gohttp
 
 ### 初始化客户端
 
 1. 设置公共header
 
 ```go
-cli := flyhttp.New(
-    flyhttp.WithHeader(http.Header{
+cli := gohttp.New(
+    gohttp.WithHeader(http.Header{
         "Authorization": {"{token}"}, //将在后续请求中作为公共header
     }),
 )
@@ -15,8 +15,8 @@ cli := flyhttp.New(
 2. 设置 base url
 
 ```go
-cli := flyhttp.New(
-    flyhttp.WithBase("http://example.com"),
+cli := gohttp.New(
+    gohttp.WithBase("http://example.com"),
 )
 
 // GET http://example.com/foo/bar
@@ -38,20 +38,20 @@ _, err := foo.Get("/foo/bar")
 
 ```go
 //GET http://example.com?name=kuhufu&age=11
-import "github.com/kuhufu/flyhttp"
+import "github.com/kuhufu/gohttp"
 ```
 
 方式一
 
 ```go
-resp, err := flyhttp.Get("http://example.com?name=kuhufu&age=11")
+resp, err := gohttp.Get("http://example.com?name=kuhufu&age=11")
 ```
 
 方式二
 
 ```go
-resp, err := flyhttp.Get("http://example.com",
-    flyhttp.Query(url.Values{
+resp, err := gohttp.Get("http://example.com",
+    gohttp.Query(url.Values{
         "name": {"kuhufu"},
         "age":  {"11"},
     }),
@@ -61,8 +61,8 @@ resp, err := flyhttp.Get("http://example.com",
 方式三
 
 ```go
-resp, err := flyhttp.Get("http://example.com?name=kuhufu",
-    flyhttp.Query(url.Values{
+resp, err := gohttp.Get("http://example.com?name=kuhufu",
+    gohttp.Query(url.Values{
         "age": {"11"},
     }),
 )
@@ -71,17 +71,17 @@ resp, err := flyhttp.Get("http://example.com?name=kuhufu",
 
 ### Post请求
 ```go
-resp, err := flyhttp.Post("http://example.com",
-    flyhttp.Header("Content-Type", "application/json"),
-    flyhttp.Body([]byte(`{"name":"kuhufu","age":11}`)),
+resp, err := gohttp.Post("http://example.com",
+    gohttp.Header("Content-Type", "application/json"),
+    gohttp.Body([]byte(`{"name":"kuhufu","age":11}`)),
 )
 ```
 
 通过 `JSONBody` 将 `Content-Type` 设置 为 `application/json`，并将对象序列化为json字符串后作为body
 
 ```go
-resp, err := flyhttp.Post("http://example.com",
-    flyhttp.JSONBody(map[string]interface{}{
+resp, err := gohttp.Post("http://example.com",
+    gohttp.JSONBody(map[string]interface{}{
         "name": "kuhufu",
         "age":  11,
     }),
@@ -91,8 +91,8 @@ resp, err := flyhttp.Post("http://example.com",
 通过 `FormBody` 将 `Content-Type` 设置为 `application/x-www-form-urlencoded`
 
 ```go
-resp, err := flyhttp.Post("http://example.com",
-    flyhttp.FormBody(url.Values{
+resp, err := gohttp.Post("http://example.com",
+    gohttp.FormBody(url.Values{
         "name": {"kuhufu"},
         "age":  {"11"},
     }),
@@ -104,7 +104,7 @@ resp, err := flyhttp.Post("http://example.com",
 ### 响应的快捷操作
 
 ```go
-res := flyhttp.Wrap(flyhttp.Get("http://example.com"))
+res := gohttp.Wrap(gohttp.Get("http://example.com"))
 
 //获取body字节
 bytes, err := res.Bytes()

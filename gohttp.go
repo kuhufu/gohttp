@@ -1,4 +1,4 @@
-package flyhttp
+package gohttp
 
 import (
 	"net/http"
