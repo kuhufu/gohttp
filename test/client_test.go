@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"testing"
@@ -36,4 +37,19 @@ func Test_Get(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+type reader string
+
+func (r reader) Read(p []byte) (n int, err error) {
+	return 0, nil
+}
+
+func Test(t *testing.T) {
+	request, err := http.NewRequest("Post", "https://www.baidu.com", reader("sdfdf"))
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(request.ContentLength)
 }

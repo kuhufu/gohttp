@@ -60,7 +60,15 @@ func ReaderBody(r io.Reader) RequestOption {
 func FormBody(form url.Values) RequestOption {
 	return func(req *http.Request) {
 		Header("Content-Type", "application/x-www-form-urlencoded")(req)
-		req.Body = ioutil.NopCloser(strings.NewReader(form.Encode()))
+
+		v := strings.NewReader(form.Encode())
+		req.Body = ioutil.NopCloser(v)
+		req.ContentLength = int64(v.Len())
+		snapshot := *v
+		req.GetBody = func() (io.ReadCloser, error) {
+			r := snapshot
+			return io.NopCloser(&r), nil
+		}
 	}
 }
 
@@ -72,6 +80,14 @@ func JSONBody(obj interface{}) RequestOption {
 		}
 
 		Header("Content-Type", "application/json")(req)
-		req.Body = ioutil.NopCloser(bytes.NewReader(marshal))
+
+		v := bytes.NewReader(marshal)
+		req.Body = ioutil.NopCloser(v)
+		req.ContentLength = int64(v.Len())
+		snapshot := *v
+		req.GetBody = func() (io.ReadCloser, error) {
+			r := snapshot
+			return io.NopCloser(&r), nil
+		}
 	}
 }
